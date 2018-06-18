@@ -39,7 +39,7 @@ public class Main {
     }
 
     /**
-     * Resolve recipes
+     * Resolve recipes in this format: 2Flour4Water
      * @param raw raw recipes stored as array
      * @param ingredients
      * @return
@@ -53,7 +53,7 @@ public class Main {
         int count = 0;
         boolean valid = false;
 
-        // Max can be 5
+        // Max can be ingredients.length
         String[][][] resolved = new String[raw.length][ingredients.length][2];
 
         // Loop trough recipes
@@ -140,6 +140,40 @@ public class Main {
     }
 
     /**
+     * Resolves recipes in this format: 2B2C2A
+     * @param raw
+     * @param ingredients
+     * @return
+     */
+    private static String[][][] ResolveRecipesSimple(String[] raw, String[] ingredients) {
+        // Max can be ingredients.length
+        String[][][] resolved = new String[raw.length][ingredients.length][2];
+        String buffer = "";
+        String temp = "";
+        int count = 0;
+        // Loop trough recipes
+        for (int i = 0; i < raw.length; i++) {
+            count = 0;
+            // Read into buffer
+            buffer = raw[i];
+            for (int i2 = 0; i2 < buffer.length(); i2++) {
+                temp = String.valueOf(buffer.charAt(i2));
+                if (i2 == 0 || (i2 > 1 && i2 % 2 == 0)) {
+                    // Amount value
+                    resolved[i][count][1] = temp;
+                } else {
+                    // Ingredient
+                    resolved[i][count][0] = temp;
+                    // We can go higher
+                    count++;
+                }
+            }
+        }
+
+        return resolved;
+    }
+
+    /**
      * Entry point
      * @param args
      */
@@ -192,13 +226,18 @@ public class Main {
            System.out.printf("Die Anzahl Mengen entspricht nicht den Zutaten: %d != %d. \n", aRawAmounts.length, iIngredientsSize);
            return;
         }
-        
+
         int[] aCooked = new int[aRawRecipes.length];
         int restAmount = 0;
 
         // Ingredients
         String[][] aIngredients = ResolveIngredient(aRawIngredients, aRawAmounts);
+
+        // Resolve
         String[][][] aRecipes = ResolveRecipes(aRawRecipes, aRawIngredients);
+
+        // This method is resolving the stuff simple:
+        //String[][][] aRecipes = ResolveRecipesSimple(aRawRecipes, aRawIngredients);
 
         boolean enough = true;
         boolean cooked = true;
@@ -242,6 +281,9 @@ public class Main {
             }
         }
 
+        // Separate from input
+        System.out.println();
+
         // Loop Make output
         for(int i = 0; i < aRawRecipes.length; i++) {
             System.out.printf("%s:%d\n", aRawRecipes[i], aCooked[i]);
@@ -253,7 +295,7 @@ public class Main {
             restAmount += Integer.parseInt(aIngredients[i][1]);
         }
 
-        // Seperate from rest amount calculation
+        // Separate from rest amount calculation
         System.out.println();
 
         // Show rest
