@@ -1,6 +1,7 @@
 # java-bakery-project
 Mini project - bakery
 
+Philip - is2.1
 
 # Project informations:
 * The project can just be done alone or with a group of 2 people.
